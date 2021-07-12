@@ -4,10 +4,10 @@ import { StyleSheet, View, Button, TextInput, } from 'react-native';
 import Esp32Idf from 'react-native-esp32-idf';
 
 export default function App() {
-  const [pop, setPop] = React.useState<String | undefined>();
+  const [pop, setPop] = React.useState<string | undefined>();
   // const [wifiList, setWifiList] = React.useState<Array<String> | undefined>()
   // const [selectedSSID, setSelectedSSID] = React.useState<String | undefined>()
-  const [password, setPassword] = React.useState<String | undefined>()
+  const [password, setPassword] = React.useState<string | undefined>()
 
 
 
