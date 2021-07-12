@@ -51,7 +51,7 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
     }
 
     override fun getName(): String {
-        return "ReactNativeEsp32Idf"
+        return "RNEsp32Idf"
     }
 
     // Example method

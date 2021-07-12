@@ -1,9 +1,9 @@
 import { NativeModules } from 'react-native';
 
 type Esp32IdfType = {
-  connectWifiDevice(pop: String): Promise<String>;
+  connectWifiDevice(pop: String): Promise<Boolean>;
 };
 
-const { Esp32Idf } = NativeModules;
+const { RNEsp32Idf } = NativeModules;
 
-export default Esp32Idf as Esp32IdfType;
+export default RNEsp32Idf as Esp32IdfType;
