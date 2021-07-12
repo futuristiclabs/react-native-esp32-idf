@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanResult
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.content.pm.PackageManager
 import android.util.Log
@@ -53,6 +54,7 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
     private var devicePrefix = ""
     private var isScanning = false
+    private var bleAdapter: BluetoothAdapter? = null
     private val provisionManager: ESPProvisionManager by lazy(LazyThreadSafetyMode.NONE) {
       ESPProvisionManager.getInstance(reactApplicationContext)
     }
