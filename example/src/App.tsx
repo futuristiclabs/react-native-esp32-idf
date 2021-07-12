@@ -4,10 +4,10 @@ import { StyleSheet, View, Text } from 'react-native';
 import Esp32Idf from 'react-native-esp32-idf';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [result, setResult] = React.useState<String | undefined>();
 
   React.useEffect(() => {
-    Esp32Idf.multiply(3, 7).then(setResult);
+    Esp32Idf.connectWifiDevice("pop").then(setResult);
   }, []);
 
   return (

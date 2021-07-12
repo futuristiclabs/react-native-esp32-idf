@@ -1,7 +1,7 @@
 import { NativeModules } from 'react-native';
 
 type Esp32IdfType = {
-  multiply(a: number, b: number): Promise<number>;
+  connectWifiDevice(pop: String): Promise<String>;
 };
 
 const { Esp32Idf } = NativeModules;
