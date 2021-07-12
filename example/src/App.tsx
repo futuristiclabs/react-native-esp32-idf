@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import Esp32Idf from 'react-native-esp32-idf';
 
 export default function App() {
-  const [result, setResult] = React.useState<String | undefined>();
+  const [result, setResult] = React.useState<Boolean | undefined>();
 
   React.useEffect(() => {
     Esp32Idf.connectWifiDevice("pop").then(setResult);
