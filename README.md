@@ -18,7 +18,7 @@ Now one can connect to esp device wifi without conncting to bluetooth.
 ## Usage
 
 ```js
-import Esp32Idf from "react-native-esp32-idf";
+import Esp32Idf,{useProvisioning} from "react-native-esp32-idf";
 
 // ...
 
