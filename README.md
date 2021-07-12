@@ -15,7 +15,8 @@ import Esp32Idf from "react-native-esp32-idf";
 
 // ...
 
-const result = await Esp32Idf.multiply(3, 7);
+const result = await Esp32Idf.connectWifiDevice("pop"); //proof of possession
+
 ```
 
 ## Contributing
