@@ -4,19 +4,18 @@ import { StyleSheet, View, Text, Button, TextInput, TouchableOpacity } from 'rea
 import Esp32Idf from 'react-native-esp32-idf';
 
 export default function App() {
-  const [result, setResult] = React.useState<Boolean | undefined>();
   const [pop, setPop] = React.useState<String | undefined>();
-  const [wifiList, setWifiList] = React.useState<Array<String> | undefined>()
-  const [selectedSSID, setSelectedSSID] = React.useState<String | undefined>()
+  // const [wifiList, setWifiList] = React.useState<Array<String> | undefined>()
+  // const [selectedSSID, setSelectedSSID] = React.useState<String | undefined>()
   const [password, setPassword] = React.useState<String | undefined>()
 
-  React.useEffect(() => {
-  }, []);
+
 
 
   const connectToEspDevice = async () => {
     try {
-      const result = await Esp32Idf.connectWifiDevice(pop); //proof of possession
+      const result = await Esp32Idf.connectWifiDevice(pop || ''); //proof of possession
+      console.log(result)
 
     }
     catch (err) {
@@ -29,7 +28,8 @@ export default function App() {
   const scanWifiNetworks = async () => {
     try {
       const result = await Esp32Idf.startWifiScan()
-      setWifiList(result)
+      // setWifiList(result)
+      console.log(result)
     }
     catch (err) {
       console.log(err)
@@ -39,7 +39,9 @@ export default function App() {
   const doProvisioningToDevice = async () => {
 
     try {
-      const result = await Esp32Idf.doProvisioning(selectedSSID, password)
+      const selectedSSID = ''
+      const result = await Esp32Idf.doProvisioning(selectedSSID, password || '')
+      console.log(result)
     }
     catch (err) {
       console.log(err)
