@@ -56,6 +56,114 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
 
     // Example method
     // See https://reactnative.dev/docs/native-modules-android
+    @ReactMethod
+    fun startWifiScan(p: Promise) {
+      if (!hasConnected(p)) {
+        return
+      }
+      p.resolve(true)
+      Log.d(TAG, "Start Wi-Fi Scan")
+      provisionManager.espDevice.scanNetworks(
+        object : WiFiScanListener {
+          override fun onWifiListReceived(wifiList: ArrayList<WiFiAccessPoint>) {
+            val params = Arguments.createMap()
+            params.putArray(
+              "wifiList",
+              Arguments.makeNativeArray(
+                wifiList.map {
+                  val item = Arguments.createMap()
+                  item.putString("ssid", it.wifiName)
+                  item.putInt("auth", it.security)
+                  item.putInt("rssi", it.rssi)
+                  item
+                }
+              )
+            )
+            sendEvent(EVENT_SCAN_WIFI, params)
+          }
+
+          override fun onWiFiScanFailed(e: Exception) {
+            Log.e(TAG, "onWiFiScanFailed")
+            val params = Arguments.createMap()
+            params.putInt("status", WIFI_SCAN_FAILED)
+            params.putString("message", e.toString())
+            sendEvent(EVENT_SCAN_WIFI, params)
+          }
+        }
+      )
+    }
+
+  @ReactMethod
+  fun doProvisioning(ssidValue: String, passphraseValue: String, p: Promise) {
+    if (!hasConnected(p)) {
+      return
+    }
+    provisionManager.espDevice.provision(
+      ssidValue,
+      passphraseValue,
+      object : ProvisionListener {
+        override fun createSessionFailed(e: Exception) {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_INIT_FAILED)
+          params.putString("message", e.message)
+          sendEvent(EVENT_PROV, params)
+        }
+
+        override fun wifiConfigSent() {
+          // Align to iOS, leave it alone
+        }
+
+        override fun wifiConfigFailed(e: Exception) {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_CONFIG_FAILED)
+          params.putString("message", e.message)
+          sendEvent(EVENT_PROV, params)
+        }
+
+        override fun wifiConfigApplied() {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_CONFIG_APPLIED)
+          sendEvent(EVENT_PROV, params)
+        }
+
+        override fun wifiConfigApplyFailed(e: Exception) {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_APPLY_FAILED)
+          params.putString("message", e.message)
+          sendEvent(EVENT_PROV, params)
+        }
+
+        override fun provisioningFailedFromDevice(failureReason: ProvisionFailureReason) {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_FAILED)
+          params.putString("message", failureReason.name)
+          sendEvent(EVENT_PROV, params)
+        }
+
+        override fun deviceProvisioningSuccess() {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_COMPLETED)
+          sendEvent(EVENT_PROV, params)
+        }
+
+        override fun onProvisioningFailed(e: Exception) {
+          val params = Arguments.createMap()
+          params.putInt("status", PROV_FAILED)
+          params.putString("message", e.message)
+          sendEvent("provisioning", params)
+        }
+      }
+    )
+  }
+
+    private fun hasConnected(p: Promise): Boolean {
+      return if (provisionManager.espDevice == null) {
+        p.reject("DEVICE_NOT_CONNECTED", "Should connect to the device first.")
+        false
+      } else {
+        true
+      }
+    }
 
     @ReactMethod
     fun connectWifiDevice(pop: String?, p: Promise) {
