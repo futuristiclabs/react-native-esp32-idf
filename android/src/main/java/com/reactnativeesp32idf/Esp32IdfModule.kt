@@ -42,7 +42,7 @@ private const val EVENT_PROV = "provisioning"
 private const val EVENT_PERMISSION = "permission"
 private const val PERM_DENIED = 2
 private const val PERM_ALLOWED = 3
-private val TAG = EspIdfRnModule::class.java.simpleName
+private val TAG = Esp32IdfModule::class.java.simpleName
 
 class Esp32IdfModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
