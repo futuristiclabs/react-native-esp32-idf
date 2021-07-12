@@ -2,7 +2,12 @@ package com.reactnativeesp32idf
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.bluetooth.le.ScanResult
+import android.content.Context
+import android.os.Build
 import android.content.pm.PackageManager
 import android.util.Log
 import com.espressif.provisioning.DeviceConnectionEvent
@@ -46,9 +51,114 @@ private val TAG = Esp32IdfModule::class.java.simpleName
 
 class Esp32IdfModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
+    private var devicePrefix = ""
+    private var isScanning = false
     private val provisionManager: ESPProvisionManager by lazy(LazyThreadSafetyMode.NONE) {
       ESPProvisionManager.getInstance(reactApplicationContext)
     }
+
+    private val bluetoothDevices: HashMap<String, BluetoothDevice> = HashMap()
+    private val bleScanListener: BleScanListener =
+      object : BleScanListener {
+        override fun scanStartFailed() {
+          isScanning = false
+          val params = Arguments.createMap()
+          params.putInt("status", BLE_SCAN_FAILED)
+          params.putString("message", "Bluetooth scan start failed")
+          sendEvent(EVENT_SCAN_BLE, params)
+        }
+
+        override fun onPeripheralFound(device: BluetoothDevice, scanResult: ScanResult) {
+          Log.d(TAG, "====== onPeripheralFound ===== " + device.name)
+          var serviceUuid: String? = null
+          val scanRecord = scanResult.scanRecord
+          if (scanRecord?.serviceUuids != null && scanRecord.serviceUuids.size > 0) {
+            serviceUuid = scanRecord.serviceUuids[0].toString()
+          }
+          if (serviceUuid != null && !bluetoothDevices.containsKey(serviceUuid)) {
+            bluetoothDevices[serviceUuid] = device
+            Log.d(TAG, "Add service UUID : $serviceUuid")
+
+            val params =
+                mapOf("deviceName" to scanRecord!!.deviceName, "serviceUuid" to serviceUuid)
+            sendEvent(EVENT_SCAN_BLE, Arguments.makeNativeMap(params))
+          }
+        }
+
+        override fun scanCompleted() {
+          isScanning = false
+          val params = Arguments.createMap()
+          params.putInt("status", BLE_SCAN_COMPLETED)
+          sendEvent(EVENT_SCAN_BLE, params)
+        }
+
+        override fun onFailure(e: Exception) {
+          isScanning = false
+          val params = Arguments.createMap()
+          params.putInt("status", BLE_SCAN_FAILED)
+          params.putString("message", e.toString())
+          sendEvent(EVENT_SCAN_BLE, params)
+          Log.e(TAG, e.message ?: "")
+          e.printStackTrace()
+        }
+      }
+
+  init {
+    reactContext.addActivityEventListener(this)
+    EventBus.getDefault().register(this)
+  }
+
+  @ReactMethod
+  fun startBleScan(prefix: String?, p: Promise) {
+    if (prefix != null) {
+      devicePrefix = prefix
+    }
+    if (!checkPermissions() || isScanning) {
+      p.resolve(false)
+      return
+    }
+    if (!isScanning &&
+      reactApplicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+      PackageManager.PERMISSION_GRANTED
+    ) {
+      p.resolve(true)
+      isScanning = true
+      bluetoothDevices.clear()
+      provisionManager.searchBleEspDevices(devicePrefix, bleScanListener)
+    }
+  }
+
+  @ReactMethod
+  fun stopBleScan() {
+    if (isScanning &&
+      reactApplicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+      PackageManager.PERMISSION_GRANTED
+    ) {
+      provisionManager.stopBleScan()
+    }
+  }
+
+  @ReactMethod
+  fun disconnectDevice() {
+    provisionManager.espDevice?.disconnectDevice()
+  }
+
+  @ReactMethod
+  fun connectDevice(uuid: String, pop: String?, p: Promise) {
+    if (!bluetoothDevices.containsKey(uuid)) {
+      p.reject("NO_DEVICE", "Can't find the device: $uuid.")
+    }
+    p.resolve(true)
+    val security =
+      if (pop == null) ESPConstants.SecurityType.SECURITY_0
+      else ESPConstants.SecurityType.SECURITY_1
+    val espDevice =
+      provisionManager.createESPDevice(ESPConstants.TransportType.TRANSPORT_BLE, security)
+    if (pop != null) {
+      espDevice.proofOfPossession = pop
+    }
+    espDevice.connectBLEDevice(bluetoothDevices[uuid], uuid)
+  }
 
     override fun getName(): String {
         return "RNEsp32Idf"
@@ -156,6 +266,19 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
     )
   }
 
+  @ReactMethod
+  fun checkPermissions(p: Promise) {
+    p.resolve(checkPermissions())
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onDeviceEvent(event: DeviceConnectionEvent) {
+    val params = Arguments.createMap()
+    params.putInt("status", event.eventType.toInt())
+    Log.d(TAG, "ON Device Prov Event RECEIVED : " + event.eventType)
+    sendEvent(EVENT_CONNECT_DEVICE, params)
+  }
+
     private fun hasConnected(p: Promise): Boolean {
       return if (provisionManager.espDevice == null) {
         p.reject("DEVICE_NOT_CONNECTED", "Should connect to the device first.")
@@ -214,6 +337,51 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
         params.putInt("status", if (resultCode == Activity.RESULT_OK) PERM_ALLOWED else PERM_DENIED)
         sendEvent(EVENT_PERMISSION, params)
       }
+    }
+  }
+
+  private fun checkPermissions(): Boolean {
+    val bluetoothManager =
+      reactApplicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    bleAdapter = bluetoothManager.adapter
+    return if (bleAdapter == null || !bleAdapter!!.isEnabled) {
+      requestBluetoothEnable()
+      false
+    } else if (!hasLocationPermissions()) {
+      requestLocationPermission()
+      false
+    } else true
+  }
+
+  private fun hasLocationPermissions(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      reactApplicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED
+    } else true
+  }
+
+  private fun requestLocationPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (currentActivity != null && currentActivity is PermissionAwareActivity) {
+        (currentActivity as PermissionAwareActivity).requestPermissions(
+          arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+          REQUEST_FINE_LOCATION,
+          this
+        )
+      } else {
+        Log.e(
+          TAG,
+          "requestLocationPermission: Activity is null or doesn't implement PermissionAwareActivity"
+        )
+      }
+    }
+  }
+
+  private fun requestBluetoothEnable() {
+    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+    if (currentActivity != null) {
+      currentActivity!!.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+      Log.d(TAG, "Requested user enables Bluetooth.")
     }
   }
 

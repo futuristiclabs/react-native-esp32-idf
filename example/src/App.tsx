@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Button, TextInput, } from 'react-native';
 import Esp32Idf from 'react-native-esp32-idf';
 
 export default function App() {

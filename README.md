@@ -8,6 +8,13 @@ provisioning wifi to esp devices
 npm install react-native-esp32-idf
 ```
 
+## Note
+This package is based on [react-native-esp-idf](https://www.npmjs.com/package/react-native-esp-idf)
+ 
+with the above package without connecting to bluetooth one cannot connect to wifi of esp device, to slove that issue made neccessary changes to the code .
+Now one can connect to esp device wifi without conncting to bluetooth.
+
+
 ## Usage
 
 ```js
@@ -17,6 +24,39 @@ import Esp32Idf from "react-native-esp32-idf";
 
 // connect to esp device through wifi
 // first connect to the hotspot of the device and later 
+const devicePrefix = 'PROV_'
+	const message: MessageInfo = {
+		scanBle: 'Searching device...',
+		scanWifi: 'Searching available Wi-Fi...',
+		connectDevice: 'Connecting your device...',
+		sendingWifiCredential: 'Sending Wi-Fi credentials',
+		confirmWifiConnection: 'Confirming Wi-Fi connection',
+		enableBluetooth: 'Please enable the Bluetooth to start scan device.',
+		enableLocation:
+			'Please grant location permission to start scan device.',
+		scanBleFailed: 'Scan device failed, please try again.',
+		connectFailed: 'Connect to device failed, please try again.',
+		disconnected: 'device disconnected, please try again.',
+		initSessionError: 'Reboot your device and retry.',
+		applyError: 'Reset your device and retry.',
+		completed: 'Device has been successfully provisioned!',
+	}
+	const {
+		bleDevices,
+		wifiAPs,
+		loading,
+		status,
+		currentStep,
+		currentWifi,
+		currentDevice,
+		results,
+		setCurrentStep,
+		configWifi,
+		connectDevice,
+		connectWifiDevice //newly added 
+		doProvisioning,
+	} = useProvisioning({ devicePrefix, message, pop: 'abcd1234' })
+
 
 const connectToEspDevice = async()=>{
     try{
@@ -29,32 +69,6 @@ const connectToEspDevice = async()=>{
     }
 }
 
-// After connecting scan wifi 
-// note scan methods works only when esp device is connected
-
-const scanWifiNetworks = async()=>{
-    try{
-        const result = await Esp32Idf.startWifiScan()
-        console.log(result)
-    }
-    catch(err){
-        console.log(err)
-    }
-}
-
-// After scan wifi networks select the ssid to which you want device to connect
-// enter password
-const doProvisioningToDevice = async()=>{
-    let ssid = selectedWifiSSID
-    let password = "User Entered Password for above network"
-    try{
-        const result = await Esp32Idf.doProvisioning(ssid,password)
-    }
-    catch(err){
-        console.log(err)
-
-    }
-}
 
 
 ```
