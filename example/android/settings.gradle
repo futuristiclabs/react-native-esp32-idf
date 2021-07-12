@@ -1,0 +1,6 @@
+rootProject.name = 'Esp32IdfExample'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+
+include ':reactnativeesp32idf'
+project(':reactnativeesp32idf').projectDir = new File(rootProject.projectDir, '../../android')
