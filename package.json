@@ -1,6 +1,6 @@
 {
   "name": "react-native-esp32-idf",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "provisioning wifi to esp devices",
   "main": "lib\\commonjs\\index.js",
   "module": "lib\\module\\index.js",
