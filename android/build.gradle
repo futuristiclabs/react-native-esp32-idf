@@ -128,6 +128,6 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.github.nitinvarda:esp-android:lib-3.0.4'
+  implementation "com.github.espressif:esp-idf-provisioning-android:lib-2.0.9"
   implementation 'org.greenrobot:eventbus:3.1.1'
 }

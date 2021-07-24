@@ -53,7 +53,7 @@ const devicePrefix = 'PROV_'
 		setCurrentStep,
 		configWifi,
 		connectDevice,
-		connectWifiDevice //newly added 
+		connectWifiDevice, //newly added 
 		doProvisioning,
 	} = useProvisioning({ devicePrefix, message, pop: 'abcd1234' })
 
