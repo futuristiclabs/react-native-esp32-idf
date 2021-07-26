@@ -30,8 +30,8 @@ let PERM_NA = -1
 let PERM_DENIED = 2
 let PERM_ALLOWED = 3
 
-@objc(Esp32Idf)
-class Esp32Idf: RCTEventEmitter {
+@objc(RNEsp32Idf)
+class RNEsp32Idf: RCTEventEmitter {
     var manager: CBPeripheralManager?
     var isObserving = false
     var bleDevices:[ESPDevice]?
@@ -196,13 +196,13 @@ class Esp32Idf: RCTEventEmitter {
     }
 }
 
-extension Esp32Idf: ESPDeviceConnectionDelegate {
+extension RNEsp32Idf: ESPDeviceConnectionDelegate {
     func getProofOfPossesion(forDevice: ESPDevice, completionHandler: @escaping (String) -> Void) {
         completionHandler(pop)
     }
 }
 
-extension Esp32Idf: CBPeripheralManagerDelegate {
+extension RNEsp32Idf: CBPeripheralManagerDelegate {
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         var status: Int?
         switch peripheral.state {

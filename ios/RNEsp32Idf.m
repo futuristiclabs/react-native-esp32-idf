@@ -1,6 +1,6 @@
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(Esp32Idf, NSObject)
+@interface RCT_EXTERN_MODULE(RNEsp32Idf, NSObject)
 
 RCT_EXTERN_METHOD(checkPermissions:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F4FF95D7245B92E800C19C63 /* Esp32Idf.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* Esp32Idf.swift */; };
+		F4FF95D7245B92E800C19C63 /* RNEsp32Idf.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* RNEsp32Idf.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,10 +23,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libEsp32Idf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libEsp32Idf.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E7B5891CC2AC0600A0062D /* Esp32Idf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Esp32Idf.m; sourceTree = "<group>"; };
-		F4FF95D5245B92E700C19C63 /* Esp32Idf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Esp32Idf-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4FF95D6245B92E800C19C63 /* Esp32Idf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Esp32Idf.swift; sourceTree = "<group>"; };
+		134814201AA4EA6300B7C361 /* libRNEsp32Idf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNEsp32Idf.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E7B5891CC2AC0600A0062D /* RNEsp32Idf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNEsp32Idf.m; sourceTree = "<group>"; };
+		F4FF95D5245B92E700C19C63 /* RNEsp32Idf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNEsp32Idf-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4FF95D6245B92E800C19C63 /* RNEsp32Idf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNEsp32Idf.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +43,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libEsp32Idf.a */,
+				134814201AA4EA6300B7C361 /* libRNEsp32Idf.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -51,9 +51,9 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				F4FF95D6245B92E800C19C63 /* Esp32Idf.swift */,
-				B3E7B5891CC2AC0600A0062D /* Esp32Idf.m */,
-				F4FF95D5245B92E700C19C63 /* Esp32Idf-Bridging-Header.h */,
+				F4FF95D6245B92E800C19C63 /* RNEsp32Idf.swift */,
+				B3E7B5891CC2AC0600A0062D /* RNEsp32Idf.m */,
+				F4FF95D5245B92E700C19C63 /* RNEsp32Idf-Bridging-Header.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* Esp32Idf */ = {
+		58B511DA1A9E6C8500147676 /* RNEsp32Idf */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Esp32Idf" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNEsp32Idf" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -73,9 +73,9 @@
 			);
 			dependencies = (
 			);
-			name = Esp32Idf;
+			name = RNEsp32Idf;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libEsp32Idf.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libRNEsp32Idf.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -92,7 +92,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "Esp32Idf" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNEsp32Idf" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -105,7 +105,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* Esp32Idf */,
+				58B511DA1A9E6C8500147676 /* RNEsp32Idf */,
 			);
 		};
 /* End PBXProject section */
@@ -115,7 +115,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4FF95D7245B92E800C19C63 /* Esp32Idf.swift in Sources */,
+				F4FF95D7245B92E800C19C63 /* RNEsp32Idf.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,9 +235,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = Esp32Idf;
+				PRODUCT_NAME = RNEsp32Idf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Esp32Idf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNEsp32Idf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -254,9 +254,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = Esp32Idf;
+				PRODUCT_NAME = RNEsp32Idf;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Esp32Idf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNEsp32Idf-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -264,7 +264,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "Esp32Idf" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNEsp32Idf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -273,7 +273,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Esp32Idf" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNEsp32Idf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,
