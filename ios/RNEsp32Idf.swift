@@ -149,6 +149,50 @@ class RNEsp32Idf: RCTEventEmitter {
             self.sendEvent(withName: EVENT_CONNECT_DEVICE, body: data)
         }
     }
+    
+    @objc(connectWifiDevice:pop:password:resolve:reject:)
+    func connectWifiDevice(deviceName:String,pop:String? = nil,password:String?=nil,resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock){
+        self.pop = pop ?? ""
+        let transport:ESPTransport = .softap
+        let security:ESPSecurity = .secure
+        resolve(true)
+        ESPProvisionManager.shared.createESPDevice(deviceName: deviceName, transport: transport, security: security,proofOfPossession: pop,softAPPassword: password){ espDeviceInstance, _ in
+        self.espDevice = espDeviceInstance
+
+        self.espDevice?.connect(delegate: self) { status in
+            let data: Any
+            print("connectionStatus",status)
+            switch status {
+            case .connected:
+                data = ["status": DEVICE_CONNECTED]
+            case let .failedToConnect(error):
+                var errorDescription = ""
+                switch error {
+                case .securityMismatch, .versionInfoError:
+                    errorDescription = error.description
+                default:
+                    errorDescription = error.description + "\nCheck if POP is correct."
+                }
+                data = ["status": DEVICE_CONNECTION_FAILED, "message": errorDescription]
+            default:
+                data = ["status": DEVICE_DISCONNECTED]
+            }
+            self.sendEvent(withName: EVENT_CONNECT_DEVICE, body: data)
+        }
+        
+        
+        }
+        if (espDevice == nil) {
+            reject("NO_DEVICE", "Can't find the device: \(deviceName).", nil)
+            return
+        }
+        
+        
+        
+        
+    }
+    
+    
     @objc(disconnectDevice)
     func disconnectDevice() {
         espDevice?.disconnect()
