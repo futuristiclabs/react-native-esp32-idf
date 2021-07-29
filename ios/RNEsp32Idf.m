@@ -23,7 +23,7 @@ RCT_EXTERN_METHOD(connectWifiDevice:(NSString *) deviceName
 
 RCT_EXTERN_METHOD(disconnectDevice)                  
 
-RCT_EXTERN_METHOD(startWifiScan(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(startWifiScan:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(doProvisioning:(NSString *) ssid passPhrase:(NSString *) passPhrase

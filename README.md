@@ -14,6 +14,8 @@ This package is based on [react-native-esp-idf](https://www.npmjs.com/package/re
 with the above package without connecting to bluetooth one cannot connect to wifi of esp device, to slove that issue made neccessary changes to the code .
 Now one can connect to esp device wifi without conncting to bluetooth.
 
+Supports Both Android and IOS
+
 
 ## Usage
 
@@ -58,6 +60,8 @@ const devicePrefix = 'PROV_'
 	} = useProvisioning({ devicePrefix, message, pop: 'abcd1234' })
 
 
+
+//android example
 const connectToEspDevice = async()=>{
     try{
         const result = await RNEsp32Idf.connectWifiDevice("pop"); //proof of possession
@@ -67,6 +71,22 @@ const connectToEspDevice = async()=>{
         console.log(err)
 
     }
+}
+
+
+// ios example
+
+const connectToEspDevice = async()=>{
+	try{
+		let pop = ""
+		let SSID =""
+		let Password=""
+		const result = await RNEsp32Idf.connectWifiDevice(SSID,POP,Password)
+
+	}
+	catch(err){
+		console.log(err)
+	}
 }
 
 
