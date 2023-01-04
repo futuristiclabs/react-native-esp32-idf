@@ -160,6 +160,24 @@ export interface EspEventEmitter extends NativeEventEmitter {
 	): EmitterSubscription
 }
 
+declare enum CustomDataStatus {
+	CUSTOM_DATA_FAIL = 0,
+	CUSTOM_DATA_SUCCESS = 1,
+	CUSTOM_DATA_SENDING = 2,
+}
+export interface CustomDataEvent {
+	status: CustomDataStatus
+	message?: string
+}
+
+type CustomDataEventListener = (event: CustomDataEvent) => void
+export interface EspEventEmitter extends NativeEventEmitter {
+	addListener(
+		eventType: 'customData',
+		listener: CustomDataEventListener
+	): EmitterSubscription
+}
+
 const { RNEsp32Idf } = NativeModules as { RNEsp32Idf: EspProvisioning }
 
 const eventEmitter: EspEventEmitter = new NativeEventEmitter(RNEsp32Idf as any)
@@ -180,6 +198,9 @@ export type MessageInfo = {
 	initSessionError: string
 	completed: string
 	applyError: string
+	customDataSent: string
+	customDataFail: string
+	customDataSending: string
 }
 
 type ProvisioningProps = {
@@ -329,6 +350,21 @@ export function useProvisioning({
 			}
 		})
 
+		eventEmitter.addListener('customData', (event) => {
+			console.log('Custom data', event)
+			switch(event.status) {
+				case 1:
+					setStatus(msg.current.customDataSent)
+					break
+				case 2:
+					setStatus(msg.current.customDataSending)
+					break
+				default:
+					setStatus(msg.current.customDataFail)
+					break
+			}
+		})
+
 		eventEmitter.addListener('provisioning', (event) => {
 			console.log('Event provisioning', event)
 			switch (event.status) {
@@ -355,6 +391,7 @@ export function useProvisioning({
 			console.log('Removed listeners')
 			eventEmitter.removeAllListeners('scanBle')
 			eventEmitter.removeAllListeners('connection')
+			eventEmitter.removeAllListeners('customData')
 			eventEmitter.removeAllListeners('provisioning')
 		}
 	}, [devicePrefix])
