@@ -19,6 +19,7 @@ import com.espressif.provisioning.WiFiAccessPoint
 import com.espressif.provisioning.listeners.BleScanListener
 import com.espressif.provisioning.listeners.ProvisionListener
 import com.espressif.provisioning.listeners.WiFiScanListener
+import com.espressif.provisioning.listeners.ResponseListener
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.modules.core.PermissionAwareActivity
@@ -35,6 +36,9 @@ private const val REQUEST_FINE_LOCATION = 2
 private const val BLE_SCAN_COMPLETED = 1
 private const val BLE_SCAN_FAILED = 0
 private const val WIFI_SCAN_FAILED = 0
+private const val CUSTOM_DATA_SUCCESS = 1
+private const val CUSTOM_DATA_FAIL = 0
+private const val CUSTOM_DATA_SENDING = 2
 private const val PROV_INIT_FAILED = 0
 private const val PROV_CONFIG_FAILED = 2
 private const val PROV_CONFIG_APPLIED = 3
@@ -46,6 +50,7 @@ private const val EVENT_SCAN_WIFI = "scanWifi"
 private const val EVENT_CONNECT_DEVICE = "connection"
 private const val EVENT_PROV = "provisioning"
 private const val EVENT_PERMISSION = "permission"
+private const val EVENT_CUSTOM_DATA = "customData"
 private const val PERM_DENIED = 2
 private const val PERM_ALLOWED = 3
 private val TAG = Esp32IdfModule::class.java.simpleName
@@ -160,6 +165,36 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
       espDevice.proofOfPossession = pop
     }
     espDevice.connectBLEDevice(bluetoothDevices[uuid], uuid)
+  }
+
+  @ReactMethod
+  fun sendData(path: String, data: String, p: Promise) {
+    if (!hasConnected(p)) {
+      return
+    }
+    val params = Arguments.createMap()
+    params.putInt("status", CUSTOM_DATA_SENDING)
+    sendEvent(EVENT_CUSTOM_DATA, params)
+    var byteData = data.toByteArray()
+    provisionManager.espDevice.sendDataToCustomEndPoint(
+      path,
+      data,
+      object : ResponseListener {
+        override fun onSuccess(byte[] returnData) {
+          val params = Arguments.createMap()
+          params.putInt("status", CUSTOM_DATA_SUCCESS)
+          sendEvent(EVENT_CUSTOM_DATA, params)
+        }
+
+        override fun onFailure(Exception e) {
+          Log.e(TAG, "onSendDataFailture")
+          val params = Arguments.createMap()
+          params.putInt("status", CUSTOM_DATA_FAIL)
+          params.putString("message", e.toString())
+          sendEvent(EVENT_CUSTOM_DATA, params)
+        }
+      }
+    )
   }
 
     override fun getName(): String {
