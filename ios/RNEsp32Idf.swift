@@ -19,11 +19,16 @@ let PROV_APPLY_FAILED = 4
 let PROV_COMPLETED = 5
 let PROV_FAILED = 6
 
+let CUSTOM_DATA_SUCCESS = 1
+let CUSTOM_DATA_FAIL = 0
+let CUSTOM_DATA_SENDING = 2
+
 let EVENT_SCAN_BLE = "scanBle"
 let EVENT_SCAN_WIFI = "scanWifi"
 let EVENT_CONNECT_DEVICE = "connection"
 let EVENT_PROV = "provisioning"
 let EVENT_PERMISSION = "permission"
+let EVENT_CUSTOM_DATA = "customData"
 
 let PERM_UNKNOWN = 0
 let PERM_NA = -1
@@ -54,7 +59,7 @@ class RNEsp32Idf: RCTEventEmitter {
     }
     
     override func supportedEvents() -> [String]! {
-        return [EVENT_SCAN_BLE, EVENT_CONNECT_DEVICE, EVENT_SCAN_WIFI, EVENT_PERMISSION, EVENT_PROV]
+        return [EVENT_SCAN_BLE, EVENT_CONNECT_DEVICE, EVENT_SCAN_WIFI, EVENT_PERMISSION, EVENT_PROV, EVENT_CUSTOM_DATA]
     }
     
     func checkPermissions() -> Bool {
@@ -147,6 +152,27 @@ class RNEsp32Idf: RCTEventEmitter {
                 data = ["status": DEVICE_DISCONNECTED]
             }
             self.sendEvent(withName: EVENT_CONNECT_DEVICE, body: data)
+        }
+    }
+
+    @objc(sendData:data:resolve:reject:)
+    func sendData(path: String, data: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+        let byteData = Data(data.utf8)
+        if (espDevice == nil) {
+            reject("NO_DEVICE", "Can't find the device:", nil)
+            return
+        }
+        resolve(true)
+        self.sendEvent(withName: EVENT_CUSTOM_DATA, body:
+                                ["status": CUSTOM_DATA_SENDING])
+        espDevice?.sendData(path: path, data: byteData) { (data, error) in
+            if error != nil {
+                self.sendEvent(withName: EVENT_CUSTOM_DATA, body:
+                                ["status": CUSTOM_DATA_FAIL, "message": error!.description])
+            } else {
+                self.sendEvent(withName: EVENT_CUSTOM_DATA, body: 
+                                ["status": CUSTOM_DATA_SUCCESS])
+            }
         }
     }
     
