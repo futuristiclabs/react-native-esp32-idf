@@ -178,7 +178,7 @@ class Esp32IdfModule(reactContext: ReactApplicationContext) :
     var byteData = data.toByteArray()
     provisionManager.espDevice.sendDataToCustomEndPoint(
       path,
-      data,
+      byteData,
       object : ResponseListener {
         override fun onSuccess(byte[] returnData) {
           val params = Arguments.createMap()
