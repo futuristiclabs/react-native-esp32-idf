@@ -15,6 +15,10 @@ RCT_EXTERN_METHOD(connectDevice:(NSString *) name pop:(nullable NSString *) pop
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(sendData:(NSString *) path data:(NSString *) data
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(connectWifiDevice:(NSString *) deviceName
                   pop:(nullable NSString *) pop
                   password:(nullable NSString *) password
